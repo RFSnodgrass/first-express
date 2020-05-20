@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
+const classroom = require('../students.js')
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+router.get('/', (req, res) => res.send("BOBO"));
 
 module.exports = router;
