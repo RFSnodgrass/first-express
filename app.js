@@ -8,8 +8,10 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }))
 //app.use(express.urlencoded({ extended: false }));
 
-const myStudents = [ { "studentId" : 1, "studentName" : "John Doe", "grades" : [{ "English" : "A" }] },
-{ "studentId" : 2, "studentName" : "Jane Doe", "grades" : [{ "English" : "C" }, { "Math" : "B" }] } ]
+let myStudents = [ { "studentId" : 1, "studentName" : "John Doe", "grades" : [{ "English" : "A" }], "email": "fake@fake.fake" },
+{ "studentId" : 2, "studentName" : "Jane Doe", "grades" : [{ "English" : "C" }, { "Math" : "B" }], "email": "fake@fake.fake" } ]
+
+let studentIDNum = 2 //magic number for studentID. Very bad, but too lazy to refactor.
 
 function findStudent (studentId) {
     return myStudents.find(student => student.studentId === Number(studentId))    
@@ -59,9 +61,29 @@ function postStudentGrade (body, res ) {
 
 }
 
+function postStudent (body, res ) {
+    
+    let addStudentName = body.studentName
+    let addStudentEmail = body.email
+    
+    if(addStudentName && addStudentEmail){
+
+        studentIDNum++
+        myStudents.push({ "studentId" : studentIDNum, "studentName" : addStudentName, "grades" : [], "email": addStudentEmail })
+        return myStudents
+        
+    }
+    else{
+        res.status(400)
+        res.send('Student Name or email can not be empty')
+    }
+
+}
+
 app.get('/student', (req, res) => res.json(searchStudents(req)));
 app.get('/students/:studentId', (req, res) => res.json(findStudent(req.params.studentId)));
 app.get('/grades/:studentId', (req, res) => res.json(findStudentGrades(req.params.studentId)));
 app.post('/grade', (req, res) => res.json(postStudentGrade(req.body, res)));
+app.post('/register', (req, res) => res.json(postStudent(req.body, res)));
 
 module.exports = app;
