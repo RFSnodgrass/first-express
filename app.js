@@ -36,8 +36,32 @@ function findStudentGrades (studentId) {
     }    
 }
 
+function postStudentGrade (body, res ) {
+    
+    let foundStudent = myStudents.find(student => student.studentId === Number(body.studentId))
+    let studentGrades = body.grades
+    
+    if(foundStudent){
+
+        if(studentGrades){            
+            foundStudent.grades.push(studentGrades)            
+            return foundStudent
+        }
+        else {
+            res.status(400)
+            res.send('Student Grades Can Not Be Empty')
+        }
+    }
+    else{
+        res.status(400)
+        res.send('Student ID Not Found')
+    }
+
+}
+
 app.get('/student', (req, res) => res.json(searchStudents(req)));
 app.get('/students/:studentId', (req, res) => res.json(findStudent(req.params.studentId)));
 app.get('/grades/:studentId', (req, res) => res.json(findStudentGrades(req.params.studentId)));
+app.post('/grade', (req, res) => res.json(postStudentGrade(req.body, res)));
 
 module.exports = app;
